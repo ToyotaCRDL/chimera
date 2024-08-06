@@ -1,0 +1,28 @@
+data/
+results/
+maps/
+chimera.egg-info/
+**/__pycache__/
+**/*.pt
+**/*.pth
+
+# simulator
+chimera/simulator/habitat/habitat-lab/
+chimera/simulator/metaworld/metaworld
+
+# mapper
+chimera/mapper/vlmaps/vlmaps/
+
+# navigator
+chimera/navigator/astar_pycpp/astar_pycpp/
+
+# generator
+
+
+# detector
+chimera/detector/detic/detectron2/
+chimera/detector/detic/Detic/
+
+# localizer
+chimera/localizer/droidslam/DROID-SLAM/
+

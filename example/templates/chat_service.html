@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            background-color: #000000;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .chat-container {
+            flex: 1;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            max-width: 90%;
+        }
+        .message.user {
+            background-color: #e1f5fe;
+            align-self: flex-end;
+        }
+        .message.system {
+            background-color: #d0f0c0;
+            align-self: flex-start;
+        }
+        .input-container {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            background-color: #f8f8f8;
+        }
+        .input-container input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .input-container button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        .loading-message {
+            color: #999;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">{{ title }}</div>
+    <div class="chat-container" id="chat-container"></div>
+    <div class="input-container">
+        <input type="text" id="messageInput" placeholder="Enter your message">
+        <button id="sendButton">Send</button>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatContainer = document.getElementById('chat-container');
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+
+            let chatHistory = [];
+
+            function addMessage(content, isUser = false, isLoading = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message' + (isUser ? ' user' : ' system');
+                messageDiv.textContent = content;
+                if (isLoading) {
+                    messageDiv.classList.add('loading-message');
+                }
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                return messageDiv;
+            }
+
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message) return;
+
+                const userMessageDiv = addMessage(message, true);
+                chatHistory.push({ content: message, is_user: true });
+                messageInput.value = '';
+
+                const loadingMessageDiv = addMessage('Waiting for response...', false, true);
+
+                fetch('/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(chatHistory)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    loadingMessageDiv.textContent = data.content;
+                    loadingMessageDiv.classList.remove('loading-message');
+                    chatHistory.push({ content: data.content, is_user: false });
+                })
+                .catch(error => {
+                    loadingMessageDiv.textContent = 'An error occurred. Please try again.';
+                    loadingMessageDiv.classList.remove('loading-message');
+                    console.error('Error:', error);
+                });
+            }
+
+            sendButton.addEventListener('click', sendMessage);
+
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

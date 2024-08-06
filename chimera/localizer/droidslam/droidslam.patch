@@ -1,0 +1,77 @@
+diff --git a/evaluation_scripts/test_euroc.py b/evaluation_scripts/test_euroc.py
+index d0214f5..2863eb3 100644
+--- a/evaluation_scripts/test_euroc.py
++++ b/evaluation_scripts/test_euroc.py
+@@ -98,6 +98,7 @@ if __name__ == '__main__':
+     parser.add_argument("--backend_thresh", type=float, default=24.0)
+     parser.add_argument("--backend_radius", type=int, default=2)
+     parser.add_argument("--backend_nms", type=int, default=2)
++    parser.add_argument("--upsample", action="store_true")
+     args = parser.parse_args()
+ 
+     torch.multiprocessing.set_start_method('spawn')
+diff --git a/evaluation_scripts/validate_tartanair.py b/evaluation_scripts/validate_tartanair.py
+index 3424bdf..9780891 100644
+--- a/evaluation_scripts/validate_tartanair.py
++++ b/evaluation_scripts/validate_tartanair.py
+@@ -60,6 +60,7 @@ if __name__ == '__main__':
+     parser.add_argument("--backend_thresh", type=float, default=20.0)
+     parser.add_argument("--backend_radius", type=int, default=2)
+     parser.add_argument("--backend_nms", type=int, default=3)
++    parser.add_argument("--upsample", action="store_true")
+ 
+     args = parser.parse_args()
+     torch.multiprocessing.set_start_method('spawn')
+diff --git a/setup.py b/setup.py
+index 9af97d4..206cc5a 100644
+--- a/setup.py
++++ b/setup.py
+@@ -23,7 +23,7 @@ setup(
+                     '-gencode=arch=compute_70,code=sm_70',
+                     '-gencode=arch=compute_75,code=sm_75',
+                     '-gencode=arch=compute_80,code=sm_80',
+-                    '-gencode=arch=compute_86,code=sm_86',
++                    #'-gencode=arch=compute_86,code=sm_86',
+                 ]
+             }),
+     ],
+@@ -53,7 +53,7 @@ setup(
+                     '-gencode=arch=compute_70,code=sm_70', 
+                     '-gencode=arch=compute_75,code=sm_75',
+                     '-gencode=arch=compute_80,code=sm_80',
+-                    '-gencode=arch=compute_86,code=sm_86',                 
++                    #'-gencode=arch=compute_86,code=sm_86',                 
+                 ]
+             }),
+     ],
+diff --git a/thirdparty/tartanair_tools/download_training.py b/thirdparty/tartanair_tools/download_training.py
+index 0515bc9..6b70c0e 100644
+--- a/thirdparty/tartanair_tools/download_training.py
++++ b/thirdparty/tartanair_tools/download_training.py
+@@ -46,7 +46,7 @@ def get_args():
+     return args
+ 
+ def _help():
+-    print ''
++    print('')
+ 
+ if __name__ == '__main__':
+     args = get_args()
+@@ -124,7 +124,7 @@ if __name__ == '__main__':
+ 
+     print('{} files are going to be downloaded...'.format(len(downloadlist)))
+     for fileurl in downloadlist:
+-        print fileurl
++        print(fileurl)
+ 
+     for fileurl in downloadlist:
+         zf = fileurl.split('/')
+@@ -155,5 +155,5 @@ if __name__ == '__main__':
+             cmd = 'azcopy copy ' + fileurl + ' ' + targetfile 
+         else:
+             cmd = 'wget -r -O ' + targetfile + ' ' + fileurl
+-        print cmd
+-        system(cmd)
+\ No newline at end of file
++        print(cmd)
++        system(cmd)
