@@ -9,7 +9,7 @@ conda install habitat-sim=0.2.4 withbullet headless -c conda-forge -c aihabitat 
 
 # install habitat_lab
 #git clone --branch challenge-2022-branch https://github.com/facebookresearch/habitat-lab.git # use challenge-2022-brach
-git clone --branch stable https://github.com/facebookresearch/habitat-lab.git # use stable
+git clone --branch v0.2.4 https://github.com/facebookresearch/habitat-lab.git # use stable
 cd habitat-lab
 pip install -e habitat-lab
 

@@ -36,7 +36,6 @@ def main(args):
             obs["rotation"] = info["rotation"]
         else:
             res = loc.track(obs)
-            print(res)
             obs.update(res)
         obs = chimera.expand_inputs(obs)
         if args.gtpose or loc.is_warmuped():
@@ -61,7 +60,6 @@ def main(args):
                 obs["rotation"] = info["rotation"]
             else:
                 res = loc.track(obs)
-                print(res)
                 obs.update(res)
             obs = chimera.expand_inputs(obs)
             obs["collision"] = chimera.detect_collision(config, obs["position2d"], prev_position2d, obs["prev_action"])
