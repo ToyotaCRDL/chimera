@@ -15,13 +15,7 @@ for arg in "${args[@]}"; do
         # install openai
         bash ./openai/install.sh
     fi
-
-    if [ "$arg" = "llama" ] || [ "$arg" = "Llama" ] || [ "$arg" = "all" ]; then
-        # install llama
-        bash ./llama/install.sh
-    fi
-
-    if [ "$arg" = "unilm" ] || [ "$arg" = "UniLM" ] || [ "$arg" = "all" ]; then
+    if [ "$arg" = "google_generativeai" ] || [ "$arg" = "GoogleGenerativeAI" ] || [ "$arg" = "all" ]; then
         # install unilm
         bash ./unilm/install.sh
     fi

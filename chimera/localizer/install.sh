@@ -15,8 +15,4 @@ for arg in "${args[@]}"; do
         # install DROID-SLAM
         bash droidslam/install.sh
     fi
-    if [ "$arg" = "orbslam3" ] || [ "$arg" = "all" ]; then
-        # install ORB-SLAM3
-        bash orbslam3/install.sh
-    fi
 done

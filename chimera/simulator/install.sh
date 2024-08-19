@@ -15,10 +15,6 @@ for arg in "${args[@]}"; do
         # install habitat
         bash ./habitat/install.sh
     fi
-    if [ "$arg" = "gibson" ] || [ "$arg" = "all" ]; then
-        # install gibson
-        bash ./gibson/install.sh
-    fi
     if [ "$arg" = "metaworld" ] || [ "$arg" = "all" ]; then
         # install metaworld
         bash ./metaworld/install.sh

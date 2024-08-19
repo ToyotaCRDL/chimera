@@ -39,11 +39,6 @@ if [ "$args" = "localizer" ] || [ "$args" = "Localizer" ] || [ "$args" = "all" ]
     bash ./localizer/install.sh "${sub_args[@]}"
 fi
 
-# DepthEstimator
-if [ "$args" = "depth_estimator" ] || [ "$args" = "DepthEstimator" ] || [ "$args" = "all" ]; then
-    bash ./depth_estimator/install.sh "${sub_args[@]}"
-fi
-
 # Generator
 if [ "$args" = "generator" ] || [ "$args" = "Generator" ]  || [ "$args" = "all" ]; then
     bash ./generator/install.sh "${sub_args[@]}"
