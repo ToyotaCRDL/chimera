@@ -21,7 +21,7 @@ import clip
 
 
 class CLIPMapper(Mapper):
-    def __init__(self, config, device=0, batch_size=1, clip_model="ViT-L/14", scales=[-1, 0, 1], point_merge=True, **kwargs):
+    def __init__(self, config, device=0, batch_size=1, clip_model="ViT-L/14", scales=[-1, 0, 1], point_merge=True, dist_merge_thresh=1000, sim_merge_thresh=0.9 **kwargs):
 
         self.device = device
         self.batch_size = batch_size
@@ -82,7 +82,8 @@ class CLIPMapper(Mapper):
         self.grid = torch.cat([grid_x, grid_y], dim=1).repeat(self.batch_size, 1, 1, 1)
 
         self.point_merge = point_merge 
-        self.merge_threshold = 1000.0
+        self.dist_merge_thresh = dist_merge_threshold
+        self.sim_merge_thresh = sim_merge_threshold
         self.num_image = 0
 
     def reset(self):
@@ -196,7 +197,7 @@ class CLIPMapper(Mapper):
                 det = torch.det(self.covs[b]) # [n]
                 diff_det = det.unsqueeze(1) - det.unsqueeze(0) # [n, n]
                 sim_clip = self.features[b] @ self.features[b].t() # [n, n]
-                keep_mask = (distances > self.merge_threshold) | (diff_det >= 0) | (sim_clip < 0.9) # [n, n]
+                keep_mask = (distances > self.dist_merge_thresh) | (diff_det >= 0) | (sim_clip < self.sim_merge_thersh) # [n, n]
                 keep_mask = keep_mask.all(dim=1) # [n]
 
                 # concate points and features
@@ -205,7 +206,7 @@ class CLIPMapper(Mapper):
                 self.covs[b] = self.covs[b][keep_mask]
                 self.image_ids[b] = self.image_ids[b][keep_mask]
 
-            print("num_points = " + str(self.points[b].size(0)) + "/" + str(self.max_points[b]))
+            #print("num_points = " + str(self.points[b].size(0)) + "/" + str(self.max_points[b]))
 
         outputs = {
             "feature_points": {
@@ -350,13 +351,6 @@ class CLIPMapper(Mapper):
 
         return outputs
 
-    def GetNearestObjectGoal(self, inputs, similarity_thresh=0.29, priority="similarity"):
-
-        # Change the function name to find()
-        # Keep this for backward compatibility
-
-        return self.find(inputs, similarity_thresh)
-
     def save(self, filename):
         
         clip_points = {
@@ -380,66 +374,3 @@ class CLIPMapper(Mapper):
             self.features[b] = self.features[b].to(self.device)
             self.image_ids[b] = self.image_ids[b].to(self.device)
 
-    def get_heatmap2d(self, objgoal, similarity_thresh=0.26, point_radius=3.0):
-
-        heatmap2d = torch.zeros(self.batch_size, 1, self.map_size, self.map_size).to(self.device)
-
-        for b in range(self.batch_size):
-        
-            text_inputs = self.tokenizer([objgoal]).to(self.device)
-            text_features = self.clip_model.encode_text(text_inputs)
-            text_features /= (text_features.norm(dim=-1, keepdim=True) + 1e-7)
-            text_features = text_features.float()
-            text_features = text_features.unsqueeze(-1)
-
-            normalized_features = self.features[b] / (self.features[b].norm(dim=1, keepdim=True) + 1e-1)
-
-            similarity = (normalized_features @ text_features).squeeze()
-
-            mean = torch.mean(similarity, dim=0, keepdim=True)
-            std = torch.std(similarity, dim=0, keepdim=True)
-            print(mean)
-            print(std)
-            zscore = (similarity - mean) / std
-
-            #goals = self.points[b][zscore > 4]
-            goals = self.points[b][similarity > similarity_thresh]
-            
-            goals2d = goals[:, [2, 0]]
-            goals2d[:, 0] = - goals2d[:, 0]
-
-            goals2d = goals2d / self.map_scale + self.map_size / 2
-            goals2d = goals2d[..., [1, 0]]
-            for n in range(goals2d.size(0)):
-                goal2d = torch.norm(self.grid.permute(2, 3, 0, 1) - goals2d[n].unsqueeze(0), dim=3).permute(2, 0, 1) < 2 * point_radius
-                heatmap2d[:, 0][goal2d] = 1
-
-        return heatmap2d
-
-    def get_similarity(self, inputs):
-
-        objgoal = inputs["objectgoal"]
-        similarities = []
-
-        for b in range(self.batch_size):
-        
-            text_inputs = self.tokenizer("a " + objgoal[b]).to(self.device)
-            text_features = self.clip_model.encode_text(text_inputs)
-            text_features /= (text_features.norm(dim=-1, keepdim=True) + 1e-7)
-            text_features = text_features.float()
-            text_features = text_features.unsqueeze(-1)
-
-            normalized_features = self.features[b] / (self.features[b].norm(dim=1, keepdim=True) + 1e-1)
-
-            similarity = (normalized_features @ text_features).squeeze()
-            
-            similarities.append(similarity)
-
-        outputs = {
-            "similarity": {
-                "point": self.points,
-                "score": similarities,
-            },
-        }     
-        
-        return outputs

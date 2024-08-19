@@ -145,6 +145,9 @@ class VLMap(Mapper):
         return outputs
 
     def find(self, inputs):
+        return find_nearest(inputs)
+
+    def find_nearest(self, inputs):
 
         batch_goals2d = []
         objgoals = inputs["objectgoal"]

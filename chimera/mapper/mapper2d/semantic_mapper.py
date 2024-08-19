@@ -239,8 +239,10 @@ class SemanticMapper(Mapper):
 
         return outputs
 
-    def GetNearestObjectGoal(self, objectgoal, position2d):
+    def find_nearest(self, objectgoal, position2d):
 
+        objectgoal = inputs["objectgoal"]
+        position2d = inputs["position2d"]
         pos2d = position2d / self.map_scale + self.map_size / 2
         pos2d = pos2d[:, [1, 0]]
 

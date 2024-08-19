@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) Toyota Central R&D Labs., Inc.
-# All rights reserved.
+# Copyright (C) 2024 TOYOTA CENTRAL R&D LABS., INC. All Rights Reserved.
 
 import chimera
 import torch
