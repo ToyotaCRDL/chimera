@@ -3,7 +3,6 @@
 
 from chimera.simulator import Simulator, create_simulator
 from chimera.mapper import Mapper, create_mapper
-from chimera.depth_estimator import DepthEstimator, create_depth_estimator
 from chimera.navigator import Navigator, create_navigation, create_navigator
 from chimera.detector import Detector, create_object_detection, create_semantic_segmentation, create_detector
 from chimera.localizer import Localizer, create_localization, create_localizer
@@ -29,8 +28,6 @@ __all__ = [
     "create_simulator",
     "Mapper",
     "create_mapper",
-    "DepthEstimator",
-    "create_depth_estimator",
     "Navigator",
     "create_navigation",
     "create_navigator",
