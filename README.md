@@ -21,10 +21,10 @@ Click [here](./chimera/) to learn more about `chimera`.
 
 2. Follow the instractions at [https://pytorch.org/get-started/locally/](https://pytorch.org/get-started/locally/) to install `pytorch` according to your `cuda` environment. 
     ```
-    conda install pytorch=2.0.1 torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+    conda install pytorch=2.1.0 torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
     ```
     (this command is for cuda=11.8)
-    where we recommend to install `pytorch=2.0.1` to use `pytorch3d`.
+    where we recommend to install `pytorch=2.1.0` for compatibility.
 
 3. Git clone this repository.
 

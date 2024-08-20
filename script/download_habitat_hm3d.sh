@@ -62,6 +62,8 @@ mkdir -p objectnav/hm3d/v1
 cd $DATA_PATH/datasets/objectnav/hm3d/v1
 wget --no-check-certificate https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v1/objectnav_hm3d_v1.zip
 unzip objectnav_hm3d_v1.zip
+mv objectnav_hm3d_v1/* ./
+rm -r objectnav_hm3d_v1
 rm objectnav_hm3d_v1.zip
 
 # Download_objectnav_hm3d_v2
@@ -70,6 +72,8 @@ mkdir -p objectnav/hm3d/v2
 cd $DATA_PATH/datasets/objectnav/hm3d/v2
 wget --no-check-certificate https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v2/objectnav_hm3d_v2.zip
 unzip objectnav_hm3d_v2.zip
+mv objectnav_hm3d_v2/* ./
+rm -r objectnav_hm3d_v2
 rm objectnav_hm3d_v2.zip
 
 # Download_imagenav_hm3d_v1

@@ -55,7 +55,8 @@ class ObjectNavAgent:
             
             if not "objectgoal" in obs.keys():
                 obs["objectgoal"] = [args.objectgoal]
-            goal2d_xy = self.sem_mapper.GetNearestObjectGoal(obs["objectgoal"], obs["position2d"])
+            outputs = self.sem_mapper.find_nearest(obs)
+            goal2d_xy = outputs["goal2d_xy"]
             
             if goal2d_xy[0] is not None:
                 obs["goal2d_xy"] = goal2d_xy[0].unsqueeze(0)
@@ -99,6 +100,7 @@ def main(args):
         for episode in range(sim.num_episodes()):
             
             agent.reset()
+            vis.reset()
 
             goal2d_xy = None
             timestamp = 0.0

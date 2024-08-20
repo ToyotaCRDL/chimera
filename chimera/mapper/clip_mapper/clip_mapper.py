@@ -21,7 +21,7 @@ import clip
 
 
 class CLIPMapper(Mapper):
-    def __init__(self, config, device=0, batch_size=1, clip_model="ViT-L/14", scales=[-1, 0, 1], point_merge=True, dist_merge_thresh=1000, sim_merge_thresh=0.9 **kwargs):
+    def __init__(self, config, device=0, batch_size=1, clip_model="ViT-L/14", scales=[-1, 0, 1], point_merge=True, dist_merge_thresh=1000, sim_merge_thresh=0.9, **kwargs):
 
         self.device = device
         self.batch_size = batch_size
@@ -82,8 +82,8 @@ class CLIPMapper(Mapper):
         self.grid = torch.cat([grid_x, grid_y], dim=1).repeat(self.batch_size, 1, 1, 1)
 
         self.point_merge = point_merge 
-        self.dist_merge_thresh = dist_merge_threshold
-        self.sim_merge_thresh = sim_merge_threshold
+        self.dist_merge_thresh = dist_merge_thresh
+        self.sim_merge_thresh = sim_merge_thresh
         self.num_image = 0
 
     def reset(self):
@@ -197,7 +197,7 @@ class CLIPMapper(Mapper):
                 det = torch.det(self.covs[b]) # [n]
                 diff_det = det.unsqueeze(1) - det.unsqueeze(0) # [n, n]
                 sim_clip = self.features[b] @ self.features[b].t() # [n, n]
-                keep_mask = (distances > self.dist_merge_thresh) | (diff_det >= 0) | (sim_clip < self.sim_merge_thersh) # [n, n]
+                keep_mask = (distances > self.dist_merge_thresh) | (diff_det >= 0) | (sim_clip < self.sim_merge_thresh) # [n, n]
                 keep_mask = keep_mask.all(dim=1) # [n]
 
                 # concate points and features
