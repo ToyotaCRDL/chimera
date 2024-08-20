@@ -4,7 +4,8 @@ CURRENT=$(cd $(dirname $0);pwd)
 cd $CURRENT
 echo "- - install detic..."
 
-pip install git+https://github.com/facebookresearch/detectron2.git
+#pip install git+https://github.com/facebookresearch/detectron2.git
+python -m pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu113/torch1.10/index.html
 
 cd $CURRENT
 git clone https://github.com/facebookresearch/Detic.git --recurse-submodules

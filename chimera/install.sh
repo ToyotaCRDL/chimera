@@ -24,9 +24,9 @@ if [ "$args" = "navigator" ] || [ "$args" = "Navigator" ] || [ "$args" = "all" ]
     bash ./navigator/install.sh "${sub_args[@]}"
 fi
 
-# Mapper
-if [ "$args" = "mapper" ] || [ "$args" = "Mapper" ] || [ "$args" = "all" ]; then
-    bash ./mapper/install.sh "${sub_args[@]}"
+# Localizer
+if [ "$args" = "localizer" ] || [ "$args" = "Localizer" ] || [ "$args" = "all" ]; then
+    bash ./localizer/install.sh "${sub_args[@]}"
 fi
 
 # Detector
@@ -34,9 +34,9 @@ if [ "$args" = "detector" ] || [ "$args" = "Detector" ] || [ "$args" = "all" ]; 
     bash ./detector/install.sh "${sub_args[@]}"
 fi
 
-# Localizer
-if [ "$args" = "localizer" ] || [ "$args" = "Localizer" ] || [ "$args" = "all" ]; then
-    bash ./localizer/install.sh "${sub_args[@]}"
+# Mapper
+if [ "$args" = "mapper" ] || [ "$args" = "Mapper" ] || [ "$args" = "all" ]; then
+    bash ./mapper/install.sh "${sub_args[@]}"
 fi
 
 # Generator
