@@ -4,8 +4,7 @@ CURRENT=$(cd $(dirname $0);pwd)
 cd $CURRENT
 echo "- - install detic..."
 
-#pip install git+https://github.com/facebookresearch/detectron2.git
-python -m pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu113/torch1.10/index.html
+pip install git+https://github.com/facebookresearch/detectron2.git
 
 cd $CURRENT
 git clone https://github.com/facebookresearch/Detic.git --recurse-submodules
@@ -13,6 +12,7 @@ cd Detic
 pip install -r requirements.txt
 
 # Download model
+mkdir -p models
 cd models
 if  [ ! -f "BoxSup-C2_LCOCO_CLIP_SwinB_896b32_4x.pth" ]; then
     wget --no-check-certificate https://dl.fbaipublicfiles.com/detic/BoxSup-C2_LCOCO_CLIP_SwinB_896b32_4x.pth

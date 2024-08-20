@@ -25,6 +25,7 @@ class GoogleGenerativeAI(Generator):
         self.model = genai.GenerativeModel(model)
         if automatic_function_calling:
             self.chat_session = self.model.start_chat(enable_automatic_function_calling=True)
+            self.keep_parts = []
         else:
             self.chat_session = None
         self.histories = []
@@ -74,14 +75,7 @@ class GoogleGenerativeAI(Generator):
         else:
             raise NotImplementedError("Input image format is not supported.")    
 
-        if len(self.histories[0]) > 0 and self.histories[0][-1]["role"] == "user":
-            self.histories[0][-1]["parts"].append(img)
-        else:
-            message = {
-                "role":"user",
-                "parts": [img]
-            }
-            self.histories[0].append(message)
+        self.keep_parts.append(img)
         
     def add_message(self, message):
 
@@ -130,6 +124,13 @@ class GoogleGenerativeAI(Generator):
             tool_choice = kwargs["function_call"]
 
         if self.chat_session is not None:
+            if isinstance(message, str):
+                message = {
+                    "role":"user",
+                    "parts":[message],
+                }
+            for part in self.keep_parts:
+                message["parts"].append(part)
             response = self.chat_session.send_message(message)
         else:
             if message is not None:

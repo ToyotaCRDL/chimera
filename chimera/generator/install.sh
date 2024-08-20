@@ -17,7 +17,7 @@ for arg in "${args[@]}"; do
     fi
     if [ "$arg" = "google_generativeai" ] || [ "$arg" = "GoogleGenerativeAI" ] || [ "$arg" = "all" ]; then
         # install unilm
-        bash ./unilm/install.sh
+        bash ./google_generativeai/install.sh
     fi
     if [ "$arg" = "stablediffusion" ] || [ "$arg" = "StableDiffusion" ] || [ "$arg" = "all" ]; then
         # install stable diffusion
