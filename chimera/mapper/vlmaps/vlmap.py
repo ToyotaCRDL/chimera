@@ -97,7 +97,7 @@ class VLMap(Mapper):
     def reset(self):
         self.builder.reset()
 
-    def add(self, inputs):
+    def add(self, inputs, **kwargs):
 
         if "position" in inputs.keys() and "rotation" in inputs.keys():
             pos = inputs["position"].clone()
@@ -144,10 +144,10 @@ class VLMap(Mapper):
 
         return outputs
 
-    def find(self, inputs):
-        return find_nearest(inputs)
+    def find(self, inputs, **kwargs):
+        return self.find_nearest(inputs, **kwargs)
 
-    def find_nearest(self, inputs):
+    def find_nearest(self, inputs, **kwargs):
 
         batch_goals2d = []
         objgoals = inputs["objectgoal"]
