@@ -5,6 +5,7 @@ Generative AI modules for `chimera`.
 # Modules
 
 - [OpenAI](./openai/)
+- [GoogleGenerativeAI](./google_generativeai/)
 - [StableDiffusion](./stablediffusion/)
 
 # Get Started
