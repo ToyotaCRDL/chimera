@@ -239,7 +239,7 @@ class SemanticMapper(Mapper):
 
         return outputs
 
-    def find_nearest(self, inputs:
+    def find_nearest(self, inputs):
 
         objectgoal = inputs["objectgoal"]
         position2d = inputs["position2d"]
