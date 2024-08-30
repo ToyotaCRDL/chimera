@@ -12,7 +12,6 @@ cd $CURRENT
 pip install evo --upgrade --no-binary evo
 pip install gdown
 conda install pytorch-scatter -c pyg
-conda install suitesparse
 
 cd DROID-SLAM
 python setup.py install
