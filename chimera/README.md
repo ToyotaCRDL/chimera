@@ -76,8 +76,8 @@ Inputs and outputs from/to modules.
  |-- action: Tensor (batch, 1) # discrete action (-1=fail, 0=done, 1=move forward, 2=turn left, 3=turn right, ...)
  |-- prev_action: Tensor (batch, 1) # discrete previous action
  |-- cmd_vel: Tensor (batch, 2) # velocity [m/s] and angle velocity [rad/s]
- |-- goal2d: Tensor (batch, 2) # range [m] and direction [rad]
- |-- goal2d_xy: Tensor (batch, 2) # 2d position of goal [m]
+ |-- goal2d: List[Tensor (2)] # range [m] and direction [rad]
+ |-- goal2d_xy: List[Tensor (2)] # 2d position of goal [m]
  |-- objects: dict
  |    |-- names: str[batch][names] # the name of object for each class
  |    |-- boxes: Tensor (batch, num, 6) # box on image (x, y, w, h, conf, class) [pix]
