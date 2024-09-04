@@ -52,7 +52,7 @@ def create_generator(config=None, name="gpt-4o", device=0, **kwargs):
     elif name == "gemini" or name == "Gemini":
         model = kwargs["model"] if "model" in kwargs.keys() else "gemini-1.5-pro"
         from chimera.generator.google_generativeai import GoogleGenerativeAI
-        return GoogleGenerativeAI(config, model, device **kwargs)
+        return GoogleGenerativeAI(config, model, device, **kwargs)
     elif name.startswith("gemini-"):
         from chimera.generator.google_generativeai import GoogleGenerativeAI
         return GoogleGenerativeAI(config, name, device, **kwargs)

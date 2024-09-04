@@ -10,12 +10,24 @@ from PIL import Image
 from torchvision.transforms import ToPILImage
 import io
 import base64
+import inspect
+import typing
+import json
+
+def format_type(annotation) -> str:
+    if annotation is inspect._empty:
+        return 'unknown'
+    elif isinstance(annotation, type):
+        return annotation.__name__
+    else:
+        return str(annotation)
 
 class OpenAI(Generator):
-    def __init__(self, config=None, model="gpt-3.5-turbo-0613", device=0, batch_size=1, 
+    def __init__(self, config=None, model="gpt-4o", device=0, batch_size=1, 
         api_key=None,
         verbose=False,
         max_messages=1000,
+        automatic_function_calling=True,
         **kwargs):
 
         if batch_size != 1:
@@ -27,10 +39,12 @@ class OpenAI(Generator):
         for b in range(self.batch_size):
             self.histories.append([])
         self.functions = []
+        self.callables = {}
         self.images = []
 
         self.verbose = verbose
         self.max_messages = max_messages
+        self.automatic_function_calling = automatic_function_calling
 
     def reset(self, batch=None):
         if batch is None:
@@ -38,14 +52,49 @@ class OpenAI(Generator):
             for b in range(self.batch_size):
                 self.histories.append([])
             self.functions = []
+            self.callables = {}
         else:
             self.histories[batch] = []
 
+    
+    def add_callable(self, function):
+        func_dict = {}
+        func_dict["name"] = function.__name__
+        func_dict["description"] = inspect.getdoc(function)
+        signature = inspect.signature(function)
+        parameters = signature.parameters
+        func_dict["parameters"] = {
+            "type": "object",
+            "properties": {},
+        }
+    
+        required_params = []
+        for param_name, param in parameters.items():
+            func_dict["parameters"]["properties"][param_name] = {
+                "type": "string", #format_type(param.annotation),
+                "description": param_name,
+            }
+            if param.default == inspect.Parameter.empty:
+                required_params.append(param_name)
+        func_dict["parameters"]["required"] = required_params
+        self.functions.append(func_dict)
+        self.callables[function.__name__] = function
+
     def add_function(self, function):
-        if isinstance(function, list):
-            self.functions = function
-        else:
+        if isinstance(function, typing.Callable):
+            self.add_callable(function)
+        elif isinstance(function, dict):
             self.functions.append(function)
+            self.automatic_function_calling = False
+        elif isinstance(function, list):
+            for func in function:
+                if isinstance(func, typing.Callable):
+                    self.add_callable(func)
+                elif isinstance(func, dict):
+                    self.functions.append(func)
+                    self.automatic_function_calling = False
+        else:
+            raise Exception("Unexpected type of function is input.")
 
     def add_image(self, image):
         if isinstance(image, torch.Tensor):
@@ -137,6 +186,38 @@ class OpenAI(Generator):
             response = self.chat_completion(self.histories[0], tool_choice, **kwargs)
             msg = response.choices[0].message
             self.add_message(msg.to_dict())
+
+            if self.automatic_function_calling:
+                while msg.tool_calls is not None:
+                    for tool_call in msg.tool_calls:
+                        func_call = tool_call.function
+
+                        func_name = func_call.name
+                        func_args = json.loads(func_call.arguments)
+                        func_res = self.callables[func_name](**func_args)
+
+                        if isinstance(func_res, torch.Tensor):
+                            tool_res = {
+                                "role": "tool",
+                                "tool_call_id": tool_call.id,
+                                "name": func_call.name,
+                                "content": "The response image is:",
+                            }
+                            for b in range(func_res.shape[0]):
+                                llm.add_image(func_res[b])
+                        else:
+                            tool_res = {
+                                "role": "tool",
+                                "tool_call_id": tool_call.id,
+                                "name": func_call.name,
+                                "content": str(func_res),
+                            }
+                            self.add_message(tool_res)
+
+                    response = self.chat_completion(self.histories[0], tool_choice, **kwargs)
+                    msg = response.choices[0].message
+                    self.add_message(msg.to_dict())
+
             return msg
             
     def chat_completion(self, messages, tool_choice="auto", **kwargs):
